@@ -15,51 +15,6 @@ async def get_free_vehicle_on_given_day(date: datetime.date, db) -> dict|None:
     :param date: which day to check for free vehicle
     :return: dict
     """
-    pipeline1 = [
-        # {
-        #     "$lookup": {
-        #         "from": "allocation",
-        #         "localField": "_id",
-        #         "foreignField": "vehicle",
-        #         "as": "allocations"
-        #     }
-        # },
-        # {
-        #     # "$match": {
-        #     #     "allocations": {"$not": {"$elemMatch": {"date": date.strftime("%Y-%m-%d")}}}
-        #     # }
-        #     "$match": {
-        #         "$expr": {
-        #             "$and": [
-        #                 {"$eq": ["$date", date.strftime("%Y-%m-%d")]}
-        #             ]
-        #         }
-        #     }
-        # },
-        # {
-        #     "$lookup": {
-        #         "from": "allocations",
-        #         "let": {"vehicle_id": {"$toString": "$_id"}},
-        #         "pipeline": [
-        #             {
-        #                 "$match": {
-        #                     "$expr": {
-        #                         "$and": [
-        #                             {"$ne": ["$date", date.strftime("%Y-%m-%d")]}
-        #                         ]
-        #                     }
-        #                 }
-        #             }
-        #         ],
-        #         "as": "allocations"
-        #     }
-        # },
-        # {"$match": {"allocations": {"$size": 0}}},
-        # {"$project": {"_id": 1}},
-        # {
-        #     "$limit": 1  # Only return one document
-        # }
-    ]
     pipeline = [
         {
             "$lookup": {

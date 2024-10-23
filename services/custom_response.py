@@ -7,7 +7,6 @@ from starlette.status import HTTP_400_BAD_REQUEST
 
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     error = jsonable_encoder({"detail": exc.errors()})
-    print(error)
     return JSONResponse(
         status_code=HTTP_400_BAD_REQUEST, content={"message": "Validation Error", "error": error}
     )

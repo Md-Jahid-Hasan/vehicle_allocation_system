@@ -146,42 +146,44 @@ async def update_allocation(allocate_id: str, request:Request, db = Depends(data
         db['allocation'].update_one({"_id": ObjectId(allocate_id)}, {"$set": update_set})
     return {"message": "Allocation updated successfully"}
 
-@router.delete("/allocate/delete/", status_code=200)
-async def cancel_allocation(request: Request, db = Depends(database_instance.get_database)):
-    """Cancel allocation of user or vehicle on a specefic date.
-    query_params: user_id or vehicle_id and date. date format should be dd-mm-yyyy"""
-    query_params = dict(request.query_params)
-    data = {}
 
-    # getting user data from the query params to ensure which allocation to delete
-    if "user_id" in query_params:
-        data["user"] = query_params.get("user_id")
-    elif "vehicle_id" in query_params:
-        data["vehicle"] = query_params.get("vehicle_id")
-    else:
-        return {"message": "No action performed"}
-
-    # verify id
-    if not ObjectId.is_valid(data[next(iter(data))]):
-        return {"message": "Invalid query params passed"}
-    data[next(iter(data))] = ObjectId(data[next(iter(data))])
-    # ensure that date is provided and date should be valid
-    date = query_params.get("date")
-    if not date:
-        return {"message": "Date is required to cancel allocation for user or vehicle"}
-
-    # check if given date is passed or not
-    date = datetime.strptime(date, "%d-%m-%Y").date()
-    if date <= datetime.now().date():
-        return {"message": "Allocation date should be tomorrow or later"}
-    data["date"] = date.strftime("%Y-%m-%d")
-
-    # cancel allocation
-    result = await db['allocation'].delete_one(data)
-    if result.deleted_count == 0:
-        return {"message": "There is no allocation for cancellation"}
-
-    return {"message": "Allocation cancelled successfully"}
+""" This api not properly tested. There may be a issues"""
+# @router.delete("/allocate/delete/", status_code=200)
+# async def cancel_allocation(request: Request, db = Depends(database_instance.get_database)):
+#     """Cancel allocation of user or vehicle on a specefic date.
+#     query_params: user_id or vehicle_id and date. date format should be dd-mm-yyyy"""
+#     query_params = dict(request.query_params)
+#     data = {}
+#
+#     # getting user data from the query params to ensure which allocation to delete
+#     if "user_id" in query_params:
+#         data["user"] = query_params.get("user_id")
+#     elif "vehicle_id" in query_params:
+#         data["vehicle"] = query_params.get("vehicle_id")
+#     else:
+#         return {"message": "No action performed"}
+#
+#     # verify id
+#     if not ObjectId.is_valid(data[next(iter(data))]):
+#         return {"message": "Invalid query params passed"}
+#     data[next(iter(data))] = ObjectId(data[next(iter(data))])
+#     # ensure that date is provided and date should be valid
+#     date = query_params.get("date")
+#     if not date:
+#         return {"message": "Date is required to cancel allocation for user or vehicle"}
+#
+#     # check if given date is passed or not
+#     date = datetime.strptime(date, "%d-%m-%Y").date()
+#     if date <= datetime.now().date():
+#         return {"message": "Allocation date should be tomorrow or later"}
+#     data["date"] = date.strftime("%Y-%m-%d")
+#
+#     # cancel allocation
+#     result = await db['allocation'].delete_one(data)
+#     if result.deleted_count == 0:
+#         return {"message": "There is no allocation for cancellation"}
+#
+#     return {"message": "Allocation cancelled successfully"}
 
 @router.delete("/allocate/delete/{allocate_id}/", status_code=200)
 async def cancel_allocation_by_id(allocate_id: str, db = Depends(database_instance.get_database)):
